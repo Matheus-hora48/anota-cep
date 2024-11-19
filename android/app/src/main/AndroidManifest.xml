@@ -7,7 +7,7 @@
     <application
         android:label="Anota Cep"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCXkDpJWJuWaLfxNXygmDxcvgV7X3JEKzM" />
