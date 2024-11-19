@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:json_annotation/json_annotation.dart';
-
-@JsonSerializable()
 class LocationModel {
   final int? id;
   final String zipCode;
