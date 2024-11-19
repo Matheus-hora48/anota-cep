@@ -11,6 +11,7 @@ class SearchBarCustom extends StatelessWidget {
   final String? Function(String? value)? validator;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType keyboardType;
+  final String? erroText;
 
   const SearchBarCustom({
     super.key,
@@ -21,6 +22,7 @@ class SearchBarCustom extends StatelessWidget {
     this.validator,
     this.inputFormatters,
     this.keyboardType = TextInputType.text,
+    this.erroText,
   });
 
   @override
@@ -64,8 +66,13 @@ class SearchBarCustom extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(10)),
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        errorStyle: const TextStyle(
+          color: Colors.red,
+        ),
+        errorText: erroText,
       ),
       textInputAction: TextInputAction.search,
       onChanged: onChanged,
