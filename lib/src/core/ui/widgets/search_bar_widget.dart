@@ -32,6 +32,17 @@ class SearchBarCustom extends StatelessWidget {
           Icons.search,
           color: AppColors.gray,
         ),
+        suffixIcon: controller.text.isNotEmpty
+            ? IconButton(
+                icon: const Icon(
+                  Icons.clear,
+                  color: AppColors.gray,
+                ),
+                onPressed: () {
+                  controller.clear();
+                },
+              )
+            : null,
         hintStyle: AppTextStyles.primaryMedium.copyWith(
           color: AppColors.gray,
         ),
@@ -47,6 +58,7 @@ class SearchBarCustom extends StatelessWidget {
             borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(10)),
       ),
+      textInputAction: TextInputAction.search,
       onChanged: onChanged,
       inputFormatters: inputFormatters,
       validator: validator,
