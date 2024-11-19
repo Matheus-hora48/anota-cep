@@ -5,8 +5,15 @@ import 'package:flutter_getit/flutter_getit.dart';
 import 'widgets/map_view.dart';
 import 'widgets/search_bar.dart';
 
-class MapPage extends StatelessWidget {
+class MapPage extends StatefulWidget {
   const MapPage({super.key});
+
+  @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+  bool _hasText = false;
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +24,19 @@ class MapPage extends StatelessWidget {
         MapView(
           bloc: controller,
         ),
-        Positioned(
-          top: 10,
-          left: 10,
-          right: 10,
-          child: SearchBarWidget(
-            bloc: controller,
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.bounceIn,
+          color: _hasText ? Colors.white : Colors.transparent,
+          child: Positioned(
+            child: SearchBarWidget(
+              bloc: controller,
+              onTextChange: (bool value) {
+                setState(() {
+                  _hasText = value;
+                });
+              },
+            ),
           ),
         ),
       ],

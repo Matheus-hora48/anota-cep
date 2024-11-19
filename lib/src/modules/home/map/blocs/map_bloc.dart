@@ -79,6 +79,7 @@ class MapBloc {
       return;
     } else if (event is ClearSuggestionsEvent) {
       _outputMapController.add(SuggestionsLoaded([]));
+      _outputMapController.add(MapInitial());
     }
 
     _outputMapController.add(
