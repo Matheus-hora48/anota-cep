@@ -71,6 +71,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     });
   }
 
+  void cleanResult() {
+    setState(() {
+      widget.onTextChange(false);
+      widget.bloc.inputMap.add(ClearSuggestionsEvent());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -124,14 +131,12 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                             widget.bloc.inputMap.add(
                               FetchSuggestionsEvent(value),
                             );
+                          } else {
+                            cleanResult();
                           }
                         });
                       },
-                      onClean: () {
-                        setState(() {
-                          widget.bloc.inputMap.add(ClearSuggestionsEvent());
-                        });
-                      },
+                      onClean: cleanResult,
                       onSubmitted: (value) async {
                         if (value.isNotEmpty) {
                           widget.bloc.inputMap.add(
