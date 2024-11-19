@@ -7,6 +7,7 @@ class SearchBarCustom extends StatelessWidget {
   final TextEditingController controller;
   final void Function(String value)? onSubmitted;
   final void Function(String value)? onChanged;
+  final VoidCallback? onClean;
   final String? Function(String? value)? validator;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType keyboardType;
@@ -16,6 +17,7 @@ class SearchBarCustom extends StatelessWidget {
     required this.controller,
     this.onSubmitted,
     this.onChanged,
+    this.onClean,
     this.validator,
     this.inputFormatters,
     this.keyboardType = TextInputType.text,
@@ -39,7 +41,14 @@ class SearchBarCustom extends StatelessWidget {
                   color: AppColors.gray,
                 ),
                 onPressed: () {
+                  if (onClean != null) {
+                    onClean!();
+                  }
+
                   controller.clear();
+                  if (onChanged != null) {
+                    onChanged!('');
+                  }
                 },
               )
             : null,
