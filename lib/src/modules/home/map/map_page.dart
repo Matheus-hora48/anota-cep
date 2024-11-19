@@ -28,15 +28,13 @@ class _MapPageState extends State<MapPage> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.bounceIn,
           color: _hasText ? Colors.white : Colors.transparent,
-          child: Positioned(
-            child: SearchBarWidget(
-              bloc: controller,
-              onTextChange: (bool value) {
-                setState(() {
-                  _hasText = value;
-                });
-              },
-            ),
+          child: SearchBarWidget(
+            bloc: controller,
+            onTextChange: (bool value) {
+              setState(() {
+                _hasText = value;
+              });
+            },
           ),
         ),
       ],
