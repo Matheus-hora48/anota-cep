@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:anota_cep/src/models/location_model.dart';
 import 'package:anota_cep/src/modules/home/passbook/bloc/passbook_state.dart';
 import 'package:anota_cep/src/repository/location_repository.dart';
 
@@ -12,6 +13,8 @@ class PassbookBloc {
       StreamController<PassbookEvent>();
   final StreamController<PassbookState> _outputPassbookController =
       StreamController<PassbookState>.broadcast();
+
+  List<LocationModel> _locations = [];
 
   PassbookBloc({
     required LocationRepository locationRepository,
@@ -38,12 +41,15 @@ class PassbookBloc {
     final result = await _locationRepository.getAllLocations();
     result.fold(
       (error) {
-        _outputPassbookController
-            .add(PassbookErrorState(errorMessage: error.message));
+        _outputPassbookController.add(
+          PassbookErrorState(errorMessage: error.message),
+        );
       },
       (locations) {
-        _outputPassbookController
-            .add(PassbookLoadedState(locations: locations));
+        _locations = locations;
+        _outputPassbookController.add(
+          PassbookLoadedState(locations: locations),
+        );
       },
     );
   }
@@ -54,8 +60,9 @@ class PassbookBloc {
     final result = await _locationRepository.deleteLocation(id);
     result.fold(
       (error) {
-        _outputPassbookController
-            .add(PassbookErrorState(errorMessage: error.message));
+        _outputPassbookController.add(
+          PassbookErrorState(errorMessage: error.message),
+        );
       },
       (_) {
         _loadLocations();
@@ -64,21 +71,15 @@ class PassbookBloc {
   }
 
   void _filterLocations(String query) {
-    if (_outputPassbookController.hasListener) {
-      _outputPassbookController.stream.listen((state) {
-        if (state is PassbookLoadedState) {
-          final filtered = state.locations
-              .where((location) =>
-                  location.address
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) ||
-                  location.zipCode.contains(query))
-              .toList();
-          _outputPassbookController
-              .add(PassbookFilteredState(filteredLocations: filtered));
-        }
-      });
-    }
+    final filtered = _locations
+        .where((location) =>
+            location.address.toLowerCase().contains(query.toLowerCase()) ||
+            location.zipCode.contains(query))
+        .toList();
+
+    _outputPassbookController.add(
+      PassbookFilteredState(filteredLocations: filtered),
+    );
   }
 
   void dispose() {

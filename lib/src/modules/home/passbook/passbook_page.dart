@@ -28,7 +28,6 @@ class _PassbookPageState extends State<PassbookPage> {
   @override
   void dispose() {
     searchController.dispose();
-    bloc.dispose();
     super.dispose();
   }
 
