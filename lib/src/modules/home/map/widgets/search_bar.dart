@@ -29,18 +29,19 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   final TextEditingController searchController = TextEditingController();
   final Debouncer debouncer = Debouncer(milliseconds: 500);
   bool hasText = false;
+  String? _errorText;
 
   @override
   void initState() {
     super.initState();
     searchController.addListener(() {
-      setState(() {
-        final hasTextNow = searchController.text.isNotEmpty;
-        if (hasText != hasTextNow) {
+      final hasTextNow = searchController.text.isNotEmpty;
+      if (hasText != hasTextNow) {
+        setState(() {
           hasText = hasTextNow;
-          widget.onTextChange(hasText);
-        }
-      });
+        });
+        widget.onTextChange(hasText);
+      }
     });
   }
 
@@ -50,10 +51,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     super.dispose();
   }
 
-  void _showLocationModal(
-    BuildContext context,
-    LocationModel location,
-  ) {
+  void _showLocationModal(BuildContext context, LocationModel location) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -63,19 +61,15 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     ).then((_) {
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          setState(() {
-            searchController.text = '';
-          });
+          searchController.text = '';
         });
       }
     });
   }
 
   void cleanResult() {
-    setState(() {
-      widget.onTextChange(false);
-      widget.bloc.inputMap.add(ClearSuggestionsEvent());
-    });
+    widget.onTextChange(false);
+    widget.bloc.inputMap.add(ClearSuggestionsEvent());
   }
 
   @override
@@ -101,10 +95,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   );
 
                   if (context.mounted) {
-                    _showLocationModal(
-                      context,
-                      location,
-                    );
+                    _showLocationModal(context, location);
                   }
                 });
               }
@@ -131,24 +122,18 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                             widget.bloc.inputMap.add(
                               FetchSuggestionsEvent(value),
                             );
+                            widget.onTextChange(true);
                           } else {
                             cleanResult();
                           }
                         });
                       },
                       onClean: cleanResult,
-                      onSubmitted: (value) async {
-                        if (value.isNotEmpty) {
-                          widget.bloc.inputMap.add(
-                            SearchLocationEvent(value),
-                          );
-                          widget.onTextChange(false);
-                        }
-                      },
+                      erroText: _errorText,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (state is SuggestionsLoaded)
+                  if (state is SuggestionsLoaded && state is! MapError)
                     Expanded(
                       child: ListView.separated(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -174,9 +159,8 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                               widget.bloc.inputMap.add(
                                 SearchLocationEvent(suggestion.zipCode),
                               );
-                              if (state is MapLoaded) {
-                                widget.onTextChange(false);
-                              }
+                              widget.bloc.inputMap.add(ClearSuggestionsEvent());
+                              widget.onTextChange(false);
                             },
                           );
                         },
@@ -203,23 +187,34 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
           Positioned(
             bottom: MediaQuery.of(context).viewInsets.bottom + 16,
             right: 16,
-            child: FloatingActionButton(
-              onPressed: () {
-                if (searchController.text.isNotEmpty) {
-                  widget.bloc.inputMap.add(
-                    SearchLocationEvent(searchController.text),
-                  );
-                  widget.onTextChange(false);
-                }
+            child: StreamBuilder<MapState>(
+              stream: widget.bloc.stream,
+              builder: (context, snapshot) {
+                final state = snapshot.data;
+                final isSuggestionsLoading = state is SuggestionsLoading;
+
+                return FloatingActionButton(
+                  onPressed: !isSuggestionsLoading
+                      ? () {
+                          if (searchController.text.isNotEmpty) {
+                            widget.bloc.inputMap.add(
+                                SearchLocationEvent(searchController.text));
+                            widget.bloc.inputMap.add(ClearSuggestionsEvent());
+                            widget.onTextChange(false);
+                          }
+                        }
+                      : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(36),
+                  ),
+                  backgroundColor:
+                      !isSuggestionsLoading ? AppColors.primary : Colors.grey,
+                  child: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                );
               },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(36),
-              ),
-              backgroundColor: AppColors.primary,
-              child: const Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
             ),
           ),
       ],

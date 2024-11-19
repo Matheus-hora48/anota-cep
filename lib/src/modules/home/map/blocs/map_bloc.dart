@@ -38,6 +38,7 @@ class MapBloc {
 
   Future<void> _mapEventToState(MapEvent event) async {
     LocationModel? currentLocation;
+    List<LocationSuggestion>? locationSuggestion = [];
 
     if (event is SearchLocationEvent) {
       final result = await _zipCodeSearch(event.zipCode);
@@ -49,6 +50,8 @@ class MapBloc {
         );
 
         if (currentLocation == null) {
+          locationSuggestion.clear();
+          _outputMapController.add(SuggestionsLoaded([]));
           _outputMapController.add(
             MapError(
               message: 'CEP não encontrado. Verifique e tente novamente.',
@@ -57,6 +60,8 @@ class MapBloc {
           return;
         }
       } else {
+        locationSuggestion.clear();
+        _outputMapController.add(SuggestionsLoaded([]));
         _outputMapController.add(
           MapError(message: 'O CEP já está salvo.'),
         );
@@ -68,10 +73,12 @@ class MapBloc {
       _mapController = event.controller;
     } else if (event is FetchSuggestionsEvent) {
       _outputMapController.add(SuggestionsLoading());
-      final suggestions = await _fetchSuggestions(event.query);
-      if (suggestions != null) {
-        _outputMapController.add(SuggestionsLoaded(suggestions));
+      locationSuggestion = await _fetchSuggestions(event.query);
+      if (locationSuggestion != null && locationSuggestion.isNotEmpty) {
+        _outputMapController.add(SuggestionsLoaded(locationSuggestion));
       } else {
+        locationSuggestion?.clear();
+        _outputMapController.add(SuggestionsLoaded([]));
         _outputMapController.add(
           SuggestionsError('Erro ao buscar sugestões.'),
         );
