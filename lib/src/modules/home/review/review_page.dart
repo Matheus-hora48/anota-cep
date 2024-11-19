@@ -36,35 +36,41 @@ class ReviewPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(labelText: 'CEP'),
-              controller: zipCodeEC,
-              style: textStyle.copyWith(color: AppColors.gray),
-              readOnly: true,
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'CEP'),
+                    controller: zipCodeEC,
+                    style: textStyle.copyWith(color: AppColors.gray),
+                    readOnly: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Endereço'),
+                    controller: addressEC,
+                    style: textStyle.copyWith(color: AppColors.gray),
+                    readOnly: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Número'),
+                    controller: numberEC,
+                    style: textStyle,
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: const InputDecoration(labelText: 'Complemento'),
+                    controller: complementEC,
+                    style: textStyle,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Endereço'),
-              controller: addressEC,
-              style: textStyle.copyWith(color: AppColors.gray),
-              readOnly: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Número'),
-              controller: numberEC,
-              style: textStyle,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(labelText: 'Complemento'),
-              controller: complementEC,
-              style: textStyle,
-            ),
-            const Spacer(),
             StreamBuilder<ReviewState>(
               stream: bloc.stream,
               builder: (context, snapshot) {
