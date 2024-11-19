@@ -137,6 +137,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                           widget.bloc.inputMap.add(
                             SearchLocationEvent(value),
                           );
+                          widget.onTextChange(false);
                         }
                       },
                     ),
@@ -168,6 +169,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                               widget.bloc.inputMap.add(
                                 SearchLocationEvent(suggestion.zipCode),
                               );
+                              if (state is MapLoaded) {
+                                widget.onTextChange(false);
+                              }
                             },
                           );
                         },
@@ -175,11 +179,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                     ),
                   if (state is MapError)
                     Card(
+                      color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Text(
                           state.message,
                           style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -198,6 +204,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   widget.bloc.inputMap.add(
                     SearchLocationEvent(searchController.text),
                   );
+                  widget.onTextChange(false);
                 }
               },
               shape: RoundedRectangleBorder(
