@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:anota_cep/src/dto/location_suggestion.dart';
 import 'package:anota_cep/src/models/location_model.dart';
-import 'package:anota_cep/src/repository/get_zip_code_location.dart';
+import 'package:anota_cep/src/repository/get_zip_code_location_repository.dart';
 import 'package:anota_cep/src/repository/location_repository.dart';
 import 'package:anota_cep/src/repository/location_suggestion_repository.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,7 +11,7 @@ import 'map_event.dart';
 import 'map_state.dart';
 
 class MapBloc {
-  final GetZipCodeLocation _getZipCodeLocation;
+  final GetZipCodeLocationRepository _getZipCodeLocation;
   final LocationRepository _locationRepository;
   final LocationSuggestionRepository _locationSuggestion;
 
@@ -24,7 +24,7 @@ class MapBloc {
       StreamController<MapState>.broadcast();
 
   MapBloc({
-    required GetZipCodeLocation getZipCodeLocation,
+    required GetZipCodeLocationRepository getZipCodeLocation,
     required LocationRepository locationRepository,
     required LocationSuggestionRepository locationSuggestion,
   })  : _getZipCodeLocation = getZipCodeLocation,

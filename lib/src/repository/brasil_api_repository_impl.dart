@@ -3,11 +3,11 @@ import 'dart:developer';
 import 'package:anota_cep/src/core/exceptions/repository_exception.dart';
 import 'package:anota_cep/src/core/network/rest_client.dart';
 import 'package:anota_cep/src/models/location_model.dart';
-import 'package:anota_cep/src/repository/get_zip_code_location.dart';
+import 'package:anota_cep/src/repository/get_zip_code_location_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-class BrasilApiRepositoryImpl implements GetZipCodeLocation {
+class BrasilApiRepositoryImpl implements GetZipCodeLocationRepository {
   final RestClient restClient;
 
   BrasilApiRepositoryImpl(this.restClient);
